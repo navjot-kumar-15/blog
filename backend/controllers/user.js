@@ -1,6 +1,14 @@
-import User from "../models/user.js";
 import geoip from "geoip-lite";
+import prisma from "../PrismaClient.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { error_response, success_response } from "../lib/utils.js";
 
+function generateToken(id) {
+  return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: "24h" });
+}
+
+// Register user
 export const registerUser = async (req, res) => {
   try {
     const { name, email, image, password, phoneNumber } = req.body;
@@ -15,24 +23,46 @@ export const registerUser = async (req, res) => {
       latitude: geo ? geo.ll[1] : null,
     };
 
+    // Checking the user
+    const isCheck = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (isCheck) {
+      return res.send({
+        success: 0,
+        message: "Invalid credentials...",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashPass = await bcrypt.hash(password, salt);
+
     const details = {
       name,
       email,
-      image,
-      password,
+      image: image || "",
+      password: hashPass,
       phoneNumber,
-      loginDetails: {
-        ipAddress,
-        location,
-      },
+      ipAddress,
+      location,
     };
 
-    const newUser = await User.create(details);
-
-    return res.send({
-      success: 1,
-      message: "User registered successfully!",
+    const newUser = await prisma.user.create({
+      data: details,
     });
+
+    success_response([], "User register successfully", res);
+  } catch (error) {
+    error_response(error, res);
+  }
+};
+
+// Login user
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
   } catch (error) {
     return res.send({
       success: 0,

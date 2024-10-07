@@ -14,7 +14,7 @@ app.use(express.json());
 // Routes
 app.use("/user", userRoutes);
 // Database
-ConnectDB();
+// ConnectDB();
 
 // Listner
 const PORT = process.env.PORT || 8080;
