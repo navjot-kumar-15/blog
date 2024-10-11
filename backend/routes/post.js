@@ -1,12 +1,13 @@
 import { Router } from "express";
 import multer from "multer";
-import { loginUser, registerUser } from "../controllers/user.js";
+import { ProtectAuth } from "../middlewares/auth.js";
+import { createPost, getAllPosts } from "../controllers/post.js";
 
 const router = Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads/user/avatar");
+    cb(null, "./uploads/post/images");
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -16,7 +17,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/register", upload.single("avatar"), registerUser);
-router.post("/login", loginUser);
-
+router.post("/create", ProtectAuth, upload.single("image"), createPost);
+router.get("/", ProtectAuth, getAllPosts);
 export default router;

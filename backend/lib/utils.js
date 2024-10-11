@@ -1,4 +1,6 @@
-export function success_response(data = [], message, res) {
+import fs from "fs";
+
+export function success_response(res, message, data = []) {
   return res.send({
     success: 1,
     message,
@@ -6,9 +8,24 @@ export function success_response(data = [], message, res) {
   });
 }
 
-export function error_response(error, res) {
+export function error_response(res, error) {
   return res.send({
     success: 0,
-    message: error.message,
+    message: error,
   });
+}
+
+export function invalid_response(message, res) {
+  return res.send({
+    success: 0,
+    message: "Invalid credentials...",
+  });
+}
+
+export function deleting_image(imagePath) {
+  if (imagePath) {
+    fs.unlink(imagePath, (err) => {
+      if (err) console.error("Error deleting file:", err);
+    });
+  }
 }

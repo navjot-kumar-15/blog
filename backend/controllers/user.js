@@ -2,7 +2,13 @@ import geoip from "geoip-lite";
 import prisma from "../PrismaClient.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { error_response, success_response } from "../lib/utils.js";
+import fs from "fs";
+import {
+  deleting_image,
+  error_response,
+  invalid_response,
+  success_response,
+} from "../lib/utils.js";
 
 function generateToken(id) {
   return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: "24h" });
@@ -10,6 +16,8 @@ function generateToken(id) {
 
 // Register user
 export const registerUser = async (req, res) => {
+  const imagePath = req.file ? `/user/avatar/${req.file.filename}` : null;
+  const filePath = req.file ? `uploads/user/avatar/${req.file.filename}` : null;
   try {
     const { name, email, image, password, phoneNumber } = req.body;
 
@@ -29,7 +37,8 @@ export const registerUser = async (req, res) => {
         email,
       },
     });
-    if (isCheck) {
+    if (!isCheck) {
+      deleting_image(filePath);
       return res.send({
         success: 0,
         message: "Invalid credentials...",
@@ -42,7 +51,7 @@ export const registerUser = async (req, res) => {
     const details = {
       name,
       email,
-      image: image || "",
+      image: imagePath || "",
       password: hashPass,
       phoneNumber,
       ipAddress,
@@ -53,9 +62,10 @@ export const registerUser = async (req, res) => {
       data: details,
     });
 
-    success_response([], "User register successfully", res);
+    success_response(res, "User register successfully", []);
   } catch (error) {
-    error_response(error, res);
+    deleting_image(filePath);
+    error_response(res, error.message);
   }
 };
 
@@ -63,10 +73,36 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-  } catch (error) {
-    return res.send({
-      success: 0,
-      message: error.message,
+
+    // Check if user exists
+    const isUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
+
+    if (!isUser) {
+      return invalid_response("Invalid credentials...", res);
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, isUser.password);
+    if (!isPasswordValid) {
+      return invalid_response("Invalid credentials...", res);
+    }
+
+    // Update user's active status
+    await prisma.user.update({
+      where: { email },
+      data: { isActive: true },
+    });
+
+    // Generate token
+    const token = generateToken(isUser.id);
+
+    // Send success response
+    return success_response(res, "User logged in successfully", { token });
+  } catch (error) {
+    return error_response(res, error.message);
   }
 };
