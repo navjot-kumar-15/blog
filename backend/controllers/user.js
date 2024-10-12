@@ -74,6 +74,10 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return invalid_response(res, "Please enter all the required fields");
+    }
+
     // Check if user exists
     const isUser = await prisma.user.findUnique({
       where: {
@@ -82,7 +86,7 @@ export const loginUser = async (req, res) => {
     });
 
     if (!isUser) {
-      return invalid_response("Invalid credentials...", res);
+      return invalid_response(res, "Invalid credentials...");
     }
 
     // Verify password

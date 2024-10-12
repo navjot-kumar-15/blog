@@ -15,10 +15,10 @@ export function error_response(res, error) {
   });
 }
 
-export function invalid_response(message, res) {
+export function invalid_response(res, message) {
   return res.send({
     success: 0,
-    message: "Invalid credentials...",
+    message,
   });
 }
 
