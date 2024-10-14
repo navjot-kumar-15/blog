@@ -11,4 +11,5 @@ model User {
     isActive    Boolean  @default(false)
     createdAt   DateTime @default(now())
     Post        Post[]
+    Like        Like[]
 }

@@ -8,4 +8,5 @@ model Post {
     createdAt   DateTime @default(now())
     userId      String   @db.ObjectId
     User        User     @relation(fields: [userId], references: [id])
+    Like        Like[]
 }

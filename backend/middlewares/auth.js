@@ -17,8 +17,9 @@ export const ProtectAuth = async (req, res, next) => {
       if (req.user) {
         next();
       }
+    } else {
+      error_response(res, "No token provided.");
     }
-    // error_response(res, "No token provided.");
   } catch (error) {
     console.log("Error :", error.message);
     // error_response(res, error.message);
