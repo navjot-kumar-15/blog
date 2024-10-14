@@ -1,0 +1,15 @@
+model Userfollow {
+    id          String @id @default(auto()) @map("_id") @db.ObjectId
+    userId      String @db.ObjectId()
+    otherUserId String @db.ObjectId()
+
+    // The user who is following
+    User User @relation("following", fields: [userId], references: [id])
+
+    // The user who is being followed
+    OtherUserId User @relation("follower", fields: [otherUserId], references: [id])
+
+    createdAt DateTime @default(now())
+
+    @@unique([userId, otherUserId])
+}

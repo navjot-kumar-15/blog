@@ -37,7 +37,7 @@ export const registerUser = async (req, res) => {
         email,
       },
     });
-    if (!isCheck) {
+    if (isCheck) {
       deleting_image(filePath);
       return res.send({
         success: 0,

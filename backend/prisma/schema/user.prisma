@@ -1,15 +1,17 @@
 // User model 
 model User {
-    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    id          String       @id @default(auto()) @map("_id") @db.ObjectId
     name        String
-    email       String   @unique
-    phoneNumber String   @default("")
-    image       String   @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+    email       String       @unique
+    phoneNumber String       @default("")
+    image       String       @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
     password    String
-    ipAddress   String   @default("")
+    ipAddress   String       @default("")
     location    Json
-    isActive    Boolean  @default(false)
-    createdAt   DateTime @default(now())
+    isActive    Boolean      @default(false)
+    createdAt   DateTime     @default(now())
     Post        Post[]
     Like        Like[]
+    following   Userfollow[] @relation("following")
+    follwer     Userfollow[] @relation("follower")
 }
