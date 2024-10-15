@@ -2,7 +2,6 @@ import geoip from "geoip-lite";
 import prisma from "../PrismaClient.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import fs from "fs";
 import {
   deleting_image,
   error_response,
@@ -108,5 +107,14 @@ export const loginUser = async (req, res) => {
     return success_response(res, "User logged in successfully", { token });
   } catch (error) {
     return error_response(res, error.message);
+  }
+};
+
+// user profile
+export const userProfile = async (req, res) => {
+  try {
+    success_response(res, "User profile fetched ", req.user);
+  } catch (error) {
+    error_response(res, error.messsage);
   }
 };

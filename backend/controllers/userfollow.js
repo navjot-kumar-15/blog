@@ -45,6 +45,7 @@ export const followUser = async (req, res) => {
   }
 };
 
+// Follower count
 export const followFollowingFriendCount = async (req, res) => {
   try {
     const followingCount = await prisma.userfollow.count({
@@ -91,9 +92,10 @@ export const followFollowingFriendCount = async (req, res) => {
   }
 };
 
+// Follow following friends details
 export const followFollowingFriendCountDetails = async (req, res) => {
   try {
-    const followingCount = await prisma.userfollow.findMany({
+    const followingDetails = await prisma.userfollow.findMany({
       where: {
         userId: req.user.id,
       },
@@ -108,9 +110,18 @@ export const followFollowingFriendCountDetails = async (req, res) => {
       },
     });
 
-    const followerCount = await prisma.userfollow.findMany({
+    const followerDetails = await prisma.userfollow.findMany({
       where: {
         otherUserId: req.user.id,
+      },
+      include: {
+        User: {
+          select: {
+            image: true,
+            name: true,
+            id: true,
+          },
+        },
       },
     });
     const friendCount = await prisma.userfollow.findMany({
@@ -118,6 +129,7 @@ export const followFollowingFriendCountDetails = async (req, res) => {
         userId: req.user.id,
       },
     });
+    // console.log(friendCount);
     const result = await Promise.all(
       friendCount.map(async (user) => {
         // Check if the other user follows back
@@ -126,14 +138,23 @@ export const followFollowingFriendCountDetails = async (req, res) => {
             userId: user.otherUserId, // The other user
             otherUserId: req.user.id, // Following the current user
           },
+          include: {
+            User: {
+              select: {
+                image: true,
+                name: true,
+                id: true,
+              },
+            },
+          },
         });
 
-        return { friends: fcount && fcount }; // If found, they follow back (mutual), otherwise not
+        return fcount && fcount; // If found, they follow back (mutual), otherwise not
       })
     );
     return res.send({
-      followingDetails: followingCount,
-      followerDetails: followerCount,
+      followingDetails,
+      followerDetails,
       friendsDetials: result,
     });
   } catch (error) {

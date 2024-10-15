@@ -1,9 +1,12 @@
 import React, { useRef, useState } from "react";
 import { Avatar } from "flowbite-react";
 import ModalC from "./ModalC";
+import { URL_IMG } from "../lib/utils";
+import { useSelector } from "react-redux";
 const Header = () => {
   const inputRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   const handleMouseEnter = () => {
     inputRef.current.focus();
@@ -29,9 +32,10 @@ const Header = () => {
         </div>
         <div className="block lg:hidden">
           <Avatar
-            img="https://cdn.pixabay.com/photo/2016/07/07/16/46/dice-1502706_640.jpg"
+            img={`${URL_IMG}${user?.details?.image}`}
             rounded
             bordered
+            size="md"
           />
         </div>
         <div

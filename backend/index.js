@@ -3,6 +3,7 @@ import cors from "cors";
 import userRoutes from "./routes/user.js";
 import postRoutes from "./routes/post.js";
 import userFollowRoutes from "./routes/userfollowed.js";
+import likeRoutes from "./routes/like.js";
 import { config } from "dotenv";
 import { ConnectDB } from "./config/db.js";
 
@@ -18,6 +19,7 @@ app.use(express.static("./uploads"));
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/userfollow", userFollowRoutes);
+app.use("/api/like", likeRoutes);
 // Database
 // ConnectDB();
 

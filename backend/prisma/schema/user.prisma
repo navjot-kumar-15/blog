@@ -9,6 +9,7 @@ model User {
     ipAddress   String       @default("")
     location    Json
     isActive    Boolean      @default(false)
+    isBan       Boolean      @default(false)
     createdAt   DateTime     @default(now())
     Post        Post[]
     Like        Like[]

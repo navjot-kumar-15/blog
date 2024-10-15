@@ -96,10 +96,22 @@ export const getAllPosts = async (req, res) => {
       posts.map(async (post) => {
         const likePost = await prisma.like.count({
           where: {
-            id: post.id,
+            postId: post.id,
           },
         });
-        return { ...post, likeCount: likePost || 0 };
+        const isLiked = await prisma.like.findUnique({
+          where: {
+            postId_userId: {
+              postId: post.id,
+              userId: req.user.id,
+            },
+          },
+        });
+        return {
+          ...post,
+          likeStatus: isLiked ? true : false,
+          likeCount: likePost || 0,
+        };
       })
     );
 

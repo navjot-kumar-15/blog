@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header, Profile, SidebarC } from "../components";
 import { Button, Drawer, Kbd, Dropdown } from "flowbite-react";
+import Card from "../components/Card";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPosts } from "../features/posts/postSlice";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { posts } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
 
   const handleClose = () => setIsOpen(false);
+  useEffect(() => {
+    dispatch(getAllPosts());
+  }, []);
   return (
     <>
       <Header />
-      <div className="flex w-full h-screen shadow-lg gap-2">
+      <div className="flex w-full h-auto shadow-lg gap-2">
         <div className=" hidden lg:block lg:w-[20%]">
           <SidebarC />
         </div>
@@ -20,11 +28,15 @@ const Home = () => {
           >
             <i className="ri-menu-5-fill block text-2xl"></i>
           </span>
-          <div className="pl-[2rem] pr-[2rem] w-[100%] pt-[4rem]">
-            Home page
+          <div className="pl-[2rem] pr-[2rem] w-[100%] pt-[4rem] pb-[3rem] flex items-center flex-col h-auto gap-[2rem] ">
+            <div>
+              <h1 className="text-xl font-semibold">New Thoughts</h1>
+            </div>
+
+            {posts && posts.map((post, i) => <Card post={post} />)}
           </div>
         </div>
-        <div className=" hidden lg:block lg:w-[30%]">
+        <div className=" hidden lg:block lg:w-[30%] mt-[5rem]">
           <Profile />
         </div>
       </div>

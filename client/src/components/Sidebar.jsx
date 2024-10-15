@@ -6,7 +6,7 @@ import { Kbd } from "flowbite-react";
 const SidebarC = () => {
   return (
     <>
-      <div className="pt-[5rem] shadow-lg h-screen">
+      <div className="pt-[5rem] shadow-sm h-screen">
         {/* Categories Box  */}
         <div className="flex flex-wrap flex-col gap-3 mt-[2rem] mb-[3rem]">
           <div className="text-center font-semibold">Categories</div>
@@ -31,7 +31,12 @@ const SidebarC = () => {
               <Dropdown
                 label=""
                 className="bg-white"
-                style={{ backgroundColor: "gray", height: "4vh", width: "3vw" }}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  height: "4vh",
+                  width: "3vw",
+                }}
               >
                 <Dropdown.Item>Dashboard</Dropdown.Item>
               </Dropdown>
@@ -43,7 +48,12 @@ const SidebarC = () => {
               <Dropdown
                 label=""
                 className="bg-white"
-                style={{ backgroundColor: "gray", height: "4vh", width: "3vw" }}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  height: "4vh",
+                  width: "3vw",
+                }}
               >
                 <Dropdown.Item>A-Z</Dropdown.Item>
               </Dropdown>
